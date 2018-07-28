@@ -1,13 +1,13 @@
 #![no_std]
 
-extern crate stm32f103xx_hal as hal;
 extern crate cast;
+extern crate stm32f103xx_hal as hal;
 
 pub mod pitch;
 pub mod songs;
 
-use hal::prelude::*;
 use hal::delay::Delay;
+use hal::prelude::*;
 
 type Pwm = hal::pwm::Pwm<hal::stm32f103xx::TIM2, hal::pwm::C1>;
 pub struct Speaker {
@@ -41,7 +41,7 @@ impl Speaker {
     }
     pub fn play_score(&mut self, score: &[(u16, u8, u8, u8)], tempo: u16, delay: &mut Delay) {
         use cast::u32;
-        let whole_dur = 60 * 1000 / u32(tempo);// in ms
+        let whole_dur = 60 * 1000 / u32(tempo); // in ms
         for &(pitch, n, d, pct) in score {
             let note_dur = whole_dur * u32(n) / u32(d);
             self.play(u32(pitch).hz());

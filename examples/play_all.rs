@@ -5,12 +5,12 @@ extern crate cortex_m;
 #[macro_use]
 extern crate cortex_m_rt as rt;
 extern crate panic_semihosting;
-extern crate stm32f103xx_hal as hal;
 extern crate pwm_speaker;
+extern crate stm32f103xx_hal as hal;
 
-use rt::ExceptionFrame;
-use hal::prelude::*;
 use hal::delay::Delay;
+use hal::prelude::*;
+use rt::ExceptionFrame;
 
 entry!(main);
 
@@ -24,7 +24,9 @@ fn main() -> ! {
     let clocks = rcc.cfgr.freeze(&mut flash.acr);
     let mut delay = Delay::new(cp.SYST, clocks);
     let c1 = gpioa.pa0.into_alternate_push_pull(&mut gpioa.crl);
-    let mut pwm = dp.TIM2.pwm(c1, &mut afio.mapr, 440.hz(), clocks, &mut rcc.apb1);
+    let mut pwm = dp
+        .TIM2
+        .pwm(c1, &mut afio.mapr, 440.hz(), clocks, &mut rcc.apb1);
     pwm.enable();
     let mut speaker = pwm_speaker::Speaker::new(pwm, clocks);
     loop {
