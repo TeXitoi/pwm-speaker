@@ -33,6 +33,8 @@ fn main() -> ! {
         delay.delay_ms(1000u32);
         speaker.play_score(&FRERE_JACQUES, 140 / 4, &mut delay);
         delay.delay_ms(1000u32);
+        speaker.play_score(&IL_ETAIT_UN_PETIT_NAVIRE, 100 / 4, &mut delay);
+        delay.delay_ms(1000u32);
         speaker.play_score(&LAVENTURIER, 160 / 4, &mut delay);
         delay.delay_ms(1000u32);
         speaker.play_score(&MARIO_THEME_INTRO, 185 / 4, &mut delay);
