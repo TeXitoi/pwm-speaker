@@ -1,0 +1,13 @@
+[package]
+name = "pwm-speaker"
+version = "0.1.0"
+authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
+
+[dependencies]
+stm32f103xx-hal = { git = "https://github.com/japaric/stm32f103xx-hal", branch = "master" }
+cortex-m-rt = "0.5"
+cast = { version = "*", default-features = false }
+
+[dev-dependencies]
+cortex-m = "0.5"
+panic-semihosting = "0.3"
