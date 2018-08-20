@@ -39,15 +39,21 @@ impl Speaker {
     pub fn mute(&mut self) {
         self.pwm.set_duty(0);
     }
-    pub fn play_score(&mut self, score: &[(u16, u8, u8, u8)], tempo: u16, delay: &mut Delay) {
+    pub fn play_score(&mut self, score: &songs::Score, delay: &mut Delay) {
+        use songs::Event::*;
         use cast::u32;
-        let whole_dur = 60 * 1000 / u32(tempo); // in ms
-        for &(pitch, n, d, pct) in score {
-            let note_dur = whole_dur * u32(n) / u32(d);
-            self.play(u32(pitch).hz());
-            delay.delay_ms(note_dur * u32(pct) / 100);
-            self.mute();
-            delay.delay_ms(note_dur * (100 - u32(pct)) / 100);
+        for event in score.events() {
+            match event {
+                Note { pitch, ms } => {
+                    self.play(u32(pitch).hz());
+                    delay.delay_ms(ms);
+                }
+                Rest { ms } => {
+                    self.mute();
+                    delay.delay_ms(ms);
+                }
+            }
         }
+        self.mute();
     }
 }

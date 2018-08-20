@@ -1,6 +1,63 @@
 use pitch::*;
 
-pub static BATEAU_SUR_LEAU: [(u16, u8, u8, u8); 23] = [
+pub struct Score {
+    pub tempo: u8,
+    pub notes: &'static [(u16, u8, u8, u8)],
+}
+impl Score {
+    pub fn events(&self) -> Events {
+        Events {
+            whole_ms: 60 * 1000 / (self.tempo as u32),
+            notes: self.notes.iter(),
+            rest: None,
+        }
+    }
+}
+pub struct Events {
+    whole_ms: u32,
+    notes: ::core::slice::Iter<'static, (u16, u8, u8, u8)>,
+    rest: Option<u32>,
+}
+impl ::core::iter::Iterator for Events {
+    type Item = Event;
+    fn next(&mut self) -> Option<Self::Item> {
+        use cast::u32;
+        match self.rest {
+            Some(ms) => {
+                self.rest = None;
+                Some(Event::Rest { ms })
+            }
+            None => {
+                self.notes
+                    .next()
+                    .map(|&(pitch, n, d, pct)| {
+                        let ms = self.whole_ms * u32(n) / u32(d);
+                        let note_ms = ms * u32(pct) / 100;
+                        let rest_ms = ms * (100 - u32(pct)) / 100;
+                        if rest_ms > 0 {
+                            self.rest = Some(rest_ms);
+                        }
+                        Event::Note { pitch, ms: note_ms }
+                    })
+            }
+        }
+    }
+}
+pub enum Event {
+    Note {
+        pitch: u16,
+        ms: u32,
+    },
+    Rest {
+        ms: u32,
+    }
+}
+
+pub static BATEAU_SUR_LEAU: Score = Score {
+    tempo: 80 / 4,
+    notes: &BATEAU_SUR_LEAU_NOTES,
+};
+static BATEAU_SUR_LEAU_NOTES: [(u16, u8, u8, u8); 23] = [
     (E5, 1, 4, 95),
     (C5, 1, 4, 95),
     (E5, 1, 4, 95),
@@ -29,7 +86,11 @@ pub static BATEAU_SUR_LEAU: [(u16, u8, u8, u8); 23] = [
     (C5, 1, 4, 95),
 ];
 
-pub static FRERE_JACQUES: [(u16, u8, u8, u8); 32] = [
+pub static FRERE_JACQUES: Score = Score {
+    tempo: 140 / 4,
+    notes: &FRERE_JACQUES_NOTES,
+};
+static FRERE_JACQUES_NOTES: [(u16, u8, u8, u8); 32] = [
     (C5, 1, 4, 90),
     (D5, 1, 4, 90),
     (E5, 1, 4, 90),
@@ -71,7 +132,11 @@ pub static FRERE_JACQUES: [(u16, u8, u8, u8); 32] = [
     (C5, 1, 2, 90),
 ];
 
-pub static IL_ETAIT_UN_PETIT_NAVIRE: [(u16, u8, u8, u8); 74] = [
+pub static IL_ETAIT_UN_PETIT_NAVIRE: Score = Score {
+    tempo: 100 / 4,
+    notes: &IL_ETAIT_UN_PETIT_NAVIRE_NOTES,
+};
+static IL_ETAIT_UN_PETIT_NAVIRE_NOTES: [(u16, u8, u8, u8); 74] = [
     (B5, 1, 8, 90),
     (B5, 1, 8, 90),
     (B5, 1, 8, 90),
@@ -156,7 +221,11 @@ pub static IL_ETAIT_UN_PETIT_NAVIRE: [(u16, u8, u8, u8); 74] = [
     (G5, 5, 8, 90),
 ];
 
-pub static LAVENTURIER: [(u16, u8, u8, u8); 17] = [
+pub static LAVENTURIER: Score = Score {
+    tempo: 160 / 4,
+    notes: &LAVENTURIER_NOTES,
+};
+static LAVENTURIER_NOTES: [(u16, u8, u8, u8); 17] = [
     (A4, 1, 4, 95),
     (D5, 1, 8, 95),
     (E5, 1, 8, 95),
@@ -176,7 +245,11 @@ pub static LAVENTURIER: [(u16, u8, u8, u8); 17] = [
     (E5, 5, 8, 95),
 ];
 
-pub static MARIO_THEME_INTRO: [(u16, u8, u8, u8); 7] = [
+pub static MARIO_THEME_INTRO: Score = Score {
+    tempo: 185 / 4,
+    notes: &MARIO_THEME_INTRO_NOTES,
+};
+static MARIO_THEME_INTRO_NOTES: [(u16, u8, u8, u8); 7] = [
     (E5, 1, 8, 50),
     (E5, 1, 4, 25),
     (E5, 1, 4, 25),
@@ -186,10 +259,15 @@ pub static MARIO_THEME_INTRO: [(u16, u8, u8, u8); 7] = [
     (G4, 1, 2, 25),
 ];
 
-pub static THIRD_KIND: [(u16, u8, u8, u8); 5] = [
+pub static THIRD_KIND: Score = Score {
+    tempo: 120 / 4,
+    notes: &THIRD_KIND_NOTES,
+};
+static THIRD_KIND_NOTES: [(u16, u8, u8, u8); 6] = [
     (BF5, 1, 4, 100),
     (C6, 1, 4, 100),
     (AF5, 1, 4, 100),
     (AF4, 1, 4, 100),
-    (EF5, 1, 1, 50),
+    (EF5, 1, 2, 100),
+    (BF5, 1, 2, 0),
 ];
