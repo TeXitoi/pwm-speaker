@@ -13,6 +13,7 @@ impl Score {
         }
     }
 }
+#[derive(Clone)]
 pub struct Events {
     whole_ms: u32,
     notes: ::core::slice::Iter<'static, (u16, u8, u8, u8)>,
