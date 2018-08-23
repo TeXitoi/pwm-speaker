@@ -19,6 +19,14 @@ pub struct Events {
     notes: ::core::slice::Iter<'static, (u16, u8, u8, u8)>,
     rest: Option<u32>,
 }
+impl Events {
+    pub fn ms_events(self) -> MsEvents {
+        MsEvents {
+            events: self,
+            wait_ms: 0,
+        }
+    }
+}
 impl ::core::iter::Iterator for Events {
     type Item = Event;
     fn next(&mut self) -> Option<Self::Item> {
@@ -53,6 +61,98 @@ pub enum Event {
         ms: u32,
     }
 }
+#[derive(Clone)]
+pub struct MsEvents {
+    events: Events,
+    wait_ms: u32,
+}
+impl ::core::iter::Iterator for MsEvents {
+    type Item = MsEvent;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.wait_ms > 0 {
+            self.wait_ms -= 1;
+            return Some(MsEvent::Wait)
+        }
+        self.events.next()
+            .map(|e| {
+                match e {
+                    Event::Note { pitch, ms } => {
+                        self.wait_ms = ms;
+                        MsEvent::BeginNote { pitch }
+                    }
+                    Event::Rest { ms } => {
+                        self.wait_ms = ms;
+                        MsEvent::EndNote
+                    }
+                }
+            })
+    }
+}
+pub enum MsEvent {
+    BeginNote {
+        pitch: u16
+    },
+    EndNote,
+    Wait,
+}
+
+pub static AU_FEU_LES_POMPIERS: Score = Score {
+    tempo: 120 / 4,
+    notes: &AU_FEU_LES_POMPIERS_NOTES,
+};
+static AU_FEU_LES_POMPIERS_NOTES: [(u16, u8, u8, u8); 48] = [
+    (G5, 1, 4, 90),
+    (G5, 1, 4, 90),
+    (B5, 1, 8, 90),
+    (G5, 1, 8, 90),
+    (D5, 1, 4, 90),
+    (D5, 1, 8, 90),
+    (D5, 1, 16, 90),
+    (D5, 1, 16, 90),
+    (D5, 1, 8, 90),
+    (D5, 1, 8, 90),
+    (B5, 1, 4, 90),
+    (G5, 1, 4, 90),
+
+    (G5, 1, 4, 90),
+    (G5, 1, 4, 90),
+    (B5, 1, 8, 90),
+    (G5, 1, 8, 90),
+    (D5, 1, 4, 90),
+    (D5, 1, 8, 90),
+    (D5, 1, 16, 90),
+    (D5, 1, 16, 90),
+    (D5, 1, 8, 90),
+    (D5, 1, 8, 90),
+    (G5, 1, 2, 90),
+
+    (G5, 1, 8, 90),
+    (G5, 1, 8, 90),
+    (G5, 1, 8, 90),
+    (B5, 1, 8, 90),
+    (D6, 1, 8, 90),
+    (B5, 1, 8, 90),
+    (G5, 1, 4, 90),
+    (D5, 1, 8, 90),
+    (D6, 1, 8, 90),
+    (D5, 1, 8, 90),
+    (D6, 1, 8, 90),
+    (B5, 1, 4, 90),
+    (G5, 1, 4, 90),
+
+    (G5, 1, 8, 90),
+    (G5, 1, 8, 90),
+    (G5, 1, 8, 90),
+    (B5, 1, 8, 90),
+    (D6, 1, 8, 90),
+    (B5, 1, 8, 90),
+    (G5, 1, 4, 90),
+    (D5, 1, 8, 90),
+    (D6, 1, 8, 90),
+    (D5, 1, 8, 90),
+    (D6, 1, 8, 90),
+    (G5, 1, 2, 90),
+];
 
 pub static BATEAU_SUR_LEAU: Score = Score {
     tempo: 80 / 4,

@@ -22,11 +22,11 @@ impl Speaker {
             clk: clocks.pclk1().0,
         }
     }
-    pub fn play(&mut self, freq: impl Into<hal::time::Hertz>) {
+    pub fn play(&mut self, pitch: u16) {
         use cast::{u16, u32};
 
         let tim: hal::stm32f103xx::TIM2 = unsafe { core::mem::uninitialized() };
-        let freq = freq.into().0;
+        let freq = pitch as u32;
         let ticks = self.clk / freq;
         let psc = u16(ticks / (1 << 16)).unwrap();
         tim.psc.write(|w| w.psc().bits(psc));
@@ -36,24 +36,31 @@ impl Speaker {
         let max = self.pwm.get_max_duty();
         self.pwm.set_duty(max / 2);
     }
-    pub fn mute(&mut self) {
+    pub fn rest(&mut self) {
         self.pwm.set_duty(0);
     }
+    pub fn mute(&mut self) {
+        self.pwm.disable();
+    }
+    pub fn unmute(&mut self) {
+        self.pwm.enable();
+    }
     pub fn play_score(&mut self, score: &songs::Score, delay: &mut Delay) {
-        use songs::Event::*;
-        use cast::u32;
+        self.rest();
+        self.unmute();
         for event in score.events() {
             match event {
-                Note { pitch, ms } => {
-                    self.play(u32(pitch).hz());
+                songs::Event::Note { pitch, ms } => {
+                    self.play(pitch);
                     delay.delay_ms(ms);
                 }
-                Rest { ms } => {
-                    self.mute();
+                songs::Event::Rest { ms } => {
+                    self.rest();
                     delay.delay_ms(ms);
                 }
             }
         }
+        self.rest();
         self.mute();
     }
 }

@@ -31,6 +31,8 @@ fn main() -> ! {
     let mut speaker = pwm_speaker::Speaker::new(pwm, clocks);
     loop {
         use pwm_speaker::songs::*;
+        speaker.play_score(&AU_FEU_LES_POMPIERS, &mut delay);
+        delay.delay_ms(1000u32);
         speaker.play_score(&BATEAU_SUR_LEAU, &mut delay);
         delay.delay_ms(1000u32);
         speaker.play_score(&FRERE_JACQUES, &mut delay);
