@@ -12,6 +12,9 @@ impl Score {
             rest: None,
         }
     }
+    pub fn ms_events(&self) -> MsEvents {
+        self.events.ms_events()
+    }
 }
 #[derive(Clone)]
 pub struct Events {
