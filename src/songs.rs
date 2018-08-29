@@ -1,5 +1,6 @@
 use pitch::*;
 
+#[derive(Clone, Debug)]
 pub struct Score {
     pub tempo: u8,
     pub notes: &'static [(u16, u8, u8, u8)],
@@ -13,10 +14,13 @@ impl Score {
         }
     }
     pub fn ms_events(&self) -> MsEvents {
-        self.events.ms_events()
+        self.events().ms_events()
+    }
+    pub fn ms_duration(&self) -> u32 {
+        self.events().map(|e| e.ms_duration()).sum()
     }
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Events {
     whole_ms: u32,
     notes: ::core::slice::Iter<'static, (u16, u8, u8, u8)>,
@@ -55,6 +59,7 @@ impl ::core::iter::Iterator for Events {
         }
     }
 }
+#[derive(Clone, Copy, Debug)]
 pub enum Event {
     Note {
         pitch: u16,
@@ -64,7 +69,15 @@ pub enum Event {
         ms: u32,
     }
 }
-#[derive(Clone)]
+impl Event {
+    fn ms_duration(&self) -> u32 {
+        match *self {
+            Event::Note { ms, .. } => ms,
+            Event::Rest { ms, .. } => ms,
+        }
+    }
+}
+#[derive(Clone, Debug)]
 pub struct MsEvents {
     events: Events,
     wait_ms: u32,
