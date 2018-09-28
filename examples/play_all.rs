@@ -43,6 +43,8 @@ fn main() -> ! {
         delay.delay_ms(1000u32);
         speaker.play_score(&MARIO_THEME_INTRO, &mut delay);
         delay.delay_ms(1000u32);
+        speaker.play_score(&SO_WHAT, &mut delay);
+        delay.delay_ms(1000u32);
         speaker.play_score(&THIRD_KIND, &mut delay);
         delay.delay_ms(1000u32);
     }
