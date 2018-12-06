@@ -1,4 +1,4 @@
-use pitch::*;
+use crate::pitch::*;
 
 #[derive(Clone, Debug)]
 pub struct Score {

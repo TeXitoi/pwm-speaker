@@ -6,8 +6,8 @@ extern crate stm32f103xx_hal as hal;
 pub mod pitch;
 pub mod songs;
 
-use hal::delay::Delay;
-use hal::prelude::*;
+use crate::hal::delay::Delay;
+use crate::hal::prelude::*;
 
 type Pwm = hal::pwm::Pwm<hal::device::TIM2, hal::pwm::C1>;
 pub struct Speaker {

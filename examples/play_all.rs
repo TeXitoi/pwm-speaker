@@ -7,9 +7,9 @@ extern crate panic_semihosting;
 extern crate pwm_speaker;
 extern crate stm32f103xx_hal as hal;
 
-use hal::delay::Delay;
-use hal::prelude::*;
-use rt::entry;
+use crate::hal::delay::Delay;
+use crate::hal::prelude::*;
+use crate::rt::entry;
 
 #[entry]
 fn main() -> ! {
