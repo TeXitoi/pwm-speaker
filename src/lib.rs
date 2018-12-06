@@ -9,7 +9,7 @@ pub mod songs;
 use hal::delay::Delay;
 use hal::prelude::*;
 
-type Pwm = hal::pwm::Pwm<hal::stm32f103xx::TIM2, hal::pwm::C1>;
+type Pwm = hal::pwm::Pwm<hal::device::TIM2, hal::pwm::C1>;
 pub struct Speaker {
     pwm: Pwm,
     clk: u32,
@@ -25,7 +25,7 @@ impl Speaker {
     pub fn play(&mut self, pitch: u16) {
         use cast::{u16, u32};
 
-        let tim: hal::stm32f103xx::TIM2 = unsafe { core::mem::uninitialized() };
+        let tim: hal::device::TIM2 = unsafe { core::mem::uninitialized() };
         let freq = pitch as u32;
         let ticks = self.clk / freq;
         let psc = u16(ticks / (1 << 16)).unwrap();
