@@ -5,7 +5,7 @@ authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
 edition = "2018"
 
 [dependencies]
-stm32f103xx-hal = { git = "https://github.com/burrbull/stm32f103xx-hal", branch = "ed2018" }
+stm32f103xx-hal = { git = "https://github.com/japaric/stm32f103xx-hal", branch = "master" }
 cortex-m-rt = "0.6"
 cast = { version = "0.2", default-features = false }
 
