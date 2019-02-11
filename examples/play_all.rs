@@ -5,7 +5,7 @@ extern crate cortex_m;
 extern crate cortex_m_rt as rt;
 extern crate panic_semihosting;
 extern crate pwm_speaker;
-extern crate stm32f103xx_hal as hal;
+extern crate stm32f1xx_hal as hal;
 
 use crate::hal::delay::Delay;
 use crate::hal::prelude::*;
@@ -13,7 +13,7 @@ use crate::rt::entry;
 
 #[entry]
 fn main() -> ! {
-    let dp = hal::device::Peripherals::take().unwrap();
+    let dp = hal::stm32::Peripherals::take().unwrap();
     let cp = cortex_m::Peripherals::take().unwrap();
     let mut flash = dp.FLASH.constrain();
     let mut rcc = dp.RCC.constrain();

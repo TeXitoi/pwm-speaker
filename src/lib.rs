@@ -1,7 +1,7 @@
 #![no_std]
 
 extern crate cast;
-extern crate stm32f103xx_hal as hal;
+extern crate stm32f1xx_hal as hal;
 
 pub mod pitch;
 pub mod songs;
@@ -9,7 +9,7 @@ pub mod songs;
 use crate::hal::delay::Delay;
 use crate::hal::prelude::*;
 
-type Pwm = hal::pwm::Pwm<hal::device::TIM2, hal::pwm::C1>;
+type Pwm = hal::pwm::Pwm<hal::stm32::TIM2, hal::pwm::C1>;
 pub struct Speaker {
     pwm: Pwm,
     clk: u32,
@@ -25,11 +25,11 @@ impl Speaker {
     pub fn play(&mut self, pitch: u16) {
         use cast::{u16, u32};
 
-        let tim: hal::device::TIM2 = unsafe { core::mem::uninitialized() };
+        let tim: hal::stm32::TIM2 = unsafe { core::mem::uninitialized() };
         let freq = pitch as u32;
         let ticks = self.clk / freq;
         let psc = u16(ticks / (1 << 16)).unwrap();
-        tim.psc.write(|w| w.psc().bits(psc));
+        unsafe { tim.psc.write(|w| w.psc().bits(psc)) };
         let arr = u16(ticks / u32(psc + 1)).unwrap();
         tim.arr.write(|w| w.arr().bits(arr));
 
