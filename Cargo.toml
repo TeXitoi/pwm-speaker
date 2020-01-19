@@ -5,10 +5,10 @@ authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
 edition = "2018"
 
 [dependencies]
-stm32f1xx-hal = { version = "0.3", features = ["rt", "stm32f103" ] }
+stm32f1xx-hal = { version = "0.5", features = ["rt", "stm32f103" ] }
 cortex-m-rt = "0.6"
 cast = { version = "0.2", default-features = false }
 
 [dev-dependencies]
-cortex-m = "0.5"
+cortex-m = "0.6"
 panic-semihosting = "0.5"

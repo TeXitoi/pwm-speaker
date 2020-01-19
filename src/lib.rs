@@ -25,11 +25,11 @@ impl Speaker {
     pub fn play(&mut self, pitch: u16) {
         use cast::{u16, u32};
 
-        let tim: hal::stm32::TIM2 = unsafe { core::mem::uninitialized() };
+        let tim: hal::stm32::TIM2 = unsafe { core::mem::transmute(()) };
         let freq = pitch as u32;
         let ticks = self.clk / freq;
         let psc = u16(ticks / (1 << 16)).unwrap();
-        unsafe { tim.psc.write(|w| w.psc().bits(psc)) };
+        tim.psc.write(|w| w.psc().bits(psc));
         let arr = u16(ticks / u32(psc + 1)).unwrap();
         tim.arr.write(|w| w.arr().bits(arr));
 
